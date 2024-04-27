@@ -8,10 +8,19 @@
 	 href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
 	 integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
 	 crossorigin="anonymous">
+	 <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 	  <style>
         .active {
             color: lightblue; 
-        }
+        }        
+        .no-select {
+	      -webkit-touch-callout: none; /* iOS Safari */
+	        -webkit-user-select: none; /* Safari */
+	         -khtml-user-select: none; /* Konqueror HTML */
+	           -moz-user-select: none; /* Firefox */
+	            -ms-user-select: none; /* Internet Explorer/Edge */
+	                user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+	    }
     </style>
 </head>
 <body>
@@ -26,19 +35,19 @@
 	                <img th:src="*{photoUrl}" class="card-img-top"  alt="Item Image">
 	                <div class="card-body" >
 	                    <!-- Item Name -->
-	                    <h5 class="card-title" th:text="${item.name}"></h5>
+	                    <!-- <h5 class="card-title" th:text="${item.name}"></h5> -->
+	                    <h5 class="card-title" th:text="*{name}"></h5>
 	                    <!-- Item Price -->
 						<p th:text="'Price: ' + ${#numbers.formatInteger((item.price), 0, 'COMMA')} + ' Ks'"></p>
 						<div class="d-flex justify-content-between">
 							<!-- Add to Cart Button -->
 		                    <a href="#" class="btn btn-primary">Add to Cart</a>
-		                    <div class="quantity-selector d-flex align-items-center">
-							    <button class="quantity-btn mx-2 border border-primary bg-info bg-opacity-10 border border-info border-start-0 rounded-end " onclick="decreaseQuantity()">-</button>
-							        <div id="quantity" class="mx-2 quantity-input " th:text="0">0</div>
-							    <button class="quantity-btn mx-2 border border-primary bg-info bg-opacity-10 border border-info border-start-0 rounded-end " onclick="increaseQuantity()">+</button>
+		                    <div class="d-flex align-items-center">
+							    <button th:data-itemid="*{id}" style="cursor: pointer;" class="qty-decrease  mx-2 border border-primary bg-primary rounded text-white bg-opacity-10 border border-white" >-</button>
+							    <div th:qty="*{id}" class="mx-2 quantity-input no-select">0</div>
+							    <button th:data-itemid="*{id}" style="cursor: pointer;" class="qty-increase mx-2 border border-primary bg-primary rounded text-white bg-opacity-10 border border-white">+</button>
 	  						</div>
-						</div>
-	                 
+						</div>	                 
 	                </div>
 	            </div>
 	       </div>
@@ -49,6 +58,23 @@
     <!-- Footer fragment -->
     <footer th:replace="~{fragments/footer :: footer}"></footer>
      <script>
+     $(document).ready(function() {
+		$(".qty-decrease").click(function(){
+			const itemId = $(this).data("itemid");
+			const qtyElement = $(`div[qty="${itemId}"]`);
+			const qty = parseInt(qtyElement.text());
+			if(qty>0){
+				qtyElement.text(qty-1);
+			}			
+		});
+		
+		$(".qty-increase").click(function(){
+			const itemId = $(this).data("itemid");
+			const qtyElement = $(`div[qty=${itemId}]`);
+			const qty = parseInt(qtyElement.text());
+			qtyElement.text(qty+1);			
+		});
+     });
         // Get the current URL
         var currentUrl = window.location.pathname;
 
@@ -62,22 +88,7 @@
                 // Add the 'active' class to the parent <li> element
                 link.parentElement.classList.add('active');
             }
-        });
-        
-        function decreaseQuantity() {
-            var quantityDiv = document.getElementById('quantity');
-            var currentValue = parseInt(quantityDiv.innerText);
-            if (currentValue > 1) {
-              quantityDiv.innerText = currentValue - 1;
-            }
-          }
-
-          function increaseQuantity() {
-            var quantityDiv = document.getElementById('quantity');
-            var currentValue = parseInt(quantityDiv.innerText);
-            quantityDiv.innerText = currentValue + 1;
-          }
-    </script>    
-    
+        });         
+    </script>        
 </body>
 </html>
