@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<head>
+    <meta charset="UTF-8">
+    <title>Online Shop</title>
+    <link rel="stylesheet"
+	 href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+	 integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+	 crossorigin="anonymous">
+	  <style>
+        .active {
+            color: lightblue; 
+        }
+    </style>
+</head>
+<body>
+    <!-- Header fragment -->
+	<header th:replace="~{fragments/header :: header}"></header>
+    <div class="container p-4 pt-10" style="margin-top: 40px;">
+    <!-- Loop over items -->
+	    <div class="row">
+	       <div th:each="item : ${items}" th:object="${item}" class=" col-md-3 mt-4">
+	            <div class="card">
+	                <!-- Item Image -->
+	                <img th:src="*{photoUrl}" class="card-img-top"  alt="Item Image">
+	                <div class="card-body" >
+	                    <!-- Item Name -->
+	                    <h5 class="card-title" th:text="${item.name}"></h5>
+	                    <!-- Item Price -->
+						<p th:text="'Price: ' + ${#numbers.formatInteger((item.price), 0, 'COMMA')} + ' Ks'"></p>
+						<div class="d-flex justify-content-between">
+							<!-- Add to Cart Button -->
+		                    <a href="#" class="btn btn-primary">Add to Cart</a>
+		                    <div class="quantity-selector d-flex align-items-center">
+							    <button class="quantity-btn mx-2 border border-primary bg-info bg-opacity-10 border border-info border-start-0 rounded-end " onclick="decreaseQuantity()">-</button>
+							        <div id="quantity" class="mx-2 quantity-input " th:text="0">0</div>
+							    <button class="quantity-btn mx-2 border border-primary bg-info bg-opacity-10 border border-info border-start-0 rounded-end " onclick="increaseQuantity()">+</button>
+	  						</div>
+						</div>
+	                 
+	                </div>
+	            </div>
+	       </div>
+	    </div>
+     <!-- End loop -->    
+    </div>
+
+    <!-- Footer fragment -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+     <script>
+        // Get the current URL
+        var currentUrl = window.location.pathname;
+
+        // Get all links in the navigation menu
+        var links = document.querySelectorAll('nav ul li a');
+
+        // Iterate over each link
+        links.forEach(function(link) {
+            // Check if the link's href matches the current URL
+            if (link.getAttribute('href') === currentUrl) {
+                // Add the 'active' class to the parent <li> element
+                link.parentElement.classList.add('active');
+            }
+        });
+        
+        function decreaseQuantity() {
+            var quantityDiv = document.getElementById('quantity');
+            var currentValue = parseInt(quantityDiv.innerText);
+            if (currentValue > 1) {
+              quantityDiv.innerText = currentValue - 1;
+            }
+          }
+
+          function increaseQuantity() {
+            var quantityDiv = document.getElementById('quantity');
+            var currentValue = parseInt(quantityDiv.innerText);
+            quantityDiv.innerText = currentValue + 1;
+          }
+    </script>    
+    
+</body>
+</html>
