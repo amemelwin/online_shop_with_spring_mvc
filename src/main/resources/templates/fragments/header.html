@@ -1,38 +1,48 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-     <style>
-        .active {
-            color: lightblue; /* Change to your desired color */
-            /* Add any other styles for the active link */
-        }
+	<head th:fragment="title">
+	    <title th:fragment="pageTitle">Home Page</title>
+	    <link rel="stylesheet"
+		 href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+		 integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+		 crossorigin="anonymous">
+		 <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+		  <style>
+	        .active {
+	            color: lightblue; 
+	        }        
+	        .no-select {
+		      -webkit-touch-callout: none; /* iOS Safari */
+		        -webkit-user-select: none; /* Safari */
+		         -khtml-user-select: none; /* Konqueror HTML */
+		           -moz-user-select: none; /* Firefox */
+		            -ms-user-select: none; /* Internet Explorer/Edge */
+		                user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+		    }
     </style>
 </head>
 <body>
-    <div th:fragment="header" class=" mb-20">
-    <nav class="navbar navbar-expand bg-dark navbar-dark d-flex justify-content-around z" style="margin-bottom: -20px; position: fixed; top: 0; width: 100%; z-index: 1000;">
+    <div th:fragment="header">
+    	<nav class="navbar navbar-expand bg-dark navbar-dark d-flex justify-content-around z" style="margin-bottom: -20px; position: fixed; top: 0; width: 100%; height:70px; z-index: 1000;">
             <div class="mx-auto container">
 	            <div class="p-2 text-white fw-semibold text-lg" style="font-size:24px">Shopify</div>
-	            <ul class="navbar-nav">
-	                <li class="nav-item"><a th:href="@{/}" href="/" class="nav-link" >Home</a></li>
+	            <ul class="navbar-nav">       
+	                <li class="nav-item" th:class="${currentPage == 'index' ? 'active' : ''}">	                 
+	                	<a th:href="@{/}" href="/" class="nav-link" >Home</a>
+	                </li>
 	                <li class="nav-item"><a th:href="@{/items}" href="/items" class="nav-link">Products</a></li>
-	                <li class="nav-item">
-	                	<a th:href="@{/items}" href="/items" class="nav-link">
+	                <li class="nav-item" th:class="${currentPage == 'carts' ? 'active' : ''}">
+	                	<a th:href="@{/carts}" href="/carts" class="nav-link">
 		                	<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-cart3" viewBox="0 0 16 16">
 							  <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l.84 4.479 9.144-.459L13.89 4zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
 							</svg>
+                            <span id="cart-badge" class="badge badge-pill badge-warning"></span>
 						</a>
 					</li>                
 	                <!-- Additional menu items -->
 	            </ul>
 	         </div>
-    </nav>
-</div>
-
-    
-    <!-- Scripts at the end of the body for faster page load -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+	    </nav>
+	</div>
 </body>
 </html>

@@ -1,27 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-<head>
-    <meta charset="UTF-8">
-    <title>Online Shop</title>
-    <link rel="stylesheet"
-	 href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
-	 integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
-	 crossorigin="anonymous">
-	 <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-	  <style>
-        .active {
-            color: lightblue; 
-        }        
-        .no-select {
-	      -webkit-touch-callout: none; /* iOS Safari */
-	        -webkit-user-select: none; /* Safari */
-	         -khtml-user-select: none; /* Konqueror HTML */
-	           -moz-user-select: none; /* Firefox */
-	            -ms-user-select: none; /* Internet Explorer/Edge */
-	                user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
-	    }
-    </style>
+<head th:replace="fragments/header::title">    
 </head>
 <body>
     <!-- Header fragment -->
@@ -29,8 +8,8 @@
     <div class="container p-4 pt-10" style="margin-top: 40px;">
     <!-- Loop over items -->
 	    <div class="row">
-	       <div th:each="item : ${items}" th:object="${item}" class=" col-md-3 mt-4">
-	            <div class="card">
+	       <div th:each="item : ${items}" th:object="${item}" class=" col-md-3 mt-4 cart-array">
+	            <div class="card" th:data-itemid="*{id}" >
 	                <!-- Item Image -->
 	                <img th:src="*{photoUrl}" class="card-img-top"  alt="Item Image">
 	                <div class="card-body" >
@@ -41,12 +20,7 @@
 						<p th:text="'Price: ' + ${#numbers.formatInteger((item.price), 0, 'COMMA')} + ' Ks'"></p>
 						<div class="d-flex justify-content-between">
 							<!-- Add to Cart Button -->
-		                    <a href="#" class="btn btn-primary">Add to Cart</a>
-		                    <div class="d-flex align-items-center">
-							    <button th:data-itemid="*{id}" style="cursor: pointer;" class="qty-decrease  mx-2 border border-primary bg-primary rounded text-white bg-opacity-10 border border-white" >-</button>
-							    <div th:qty="*{id}" class="mx-2 quantity-input no-select">0</div>
-							    <button th:data-itemid="*{id}" style="cursor: pointer;" class="qty-increase mx-2 border border-primary bg-primary rounded text-white bg-opacity-10 border border-white">+</button>
-	  						</div>
+		                    <button th:data-itemid="*{id}" th:data-itemname="*{name}" th:data-itemprice="*{price}"  class="add-cart-btn btn btn-primary">Add to Cart</button>
 						</div>	                 
 	                </div>
 	            </div>
@@ -59,6 +33,47 @@
     <footer th:replace="~{fragments/footer :: footer}"></footer>
      <script>
      $(document).ready(function() {
+		const initCart = ()=>{
+			//  Initialize cart badge
+			const carts = JSON.parse(localStorage.getItem("carts")|| "[]"); 
+			$("#cart-badge").text(carts.length);
+
+			// btn style disabled
+			$(".cart-array").children().each(function(i,object){
+				const itemId = $(object).data("itemid");
+				const [exist] = carts.filter((cart)=>cart.id == itemId);
+				if(exist){
+					console.log("itemId",itemId);
+					$(`button[data-itemid=${itemId}]`).addClass("disabled");
+				} 
+			})
+		} 
+		initCart();
+    	 /* Add To Cart btn function  */
+    	 $(".add-cart-btn").click(function(){
+    		 const itemId = $(this).data("itemid");
+    		 const itemName = $(this).data("itemname");
+    		 const itemPrice= $(this).data("itemprice");
+    		 const item = {
+    				 id: itemId,
+    				 name: itemName,
+    				 price: itemPrice,
+    				 qty: 1
+    		 }
+			const carts = JSON.parse(localStorage.getItem("carts")|| "[]");
+			const [exist] = carts.filter((cart)=>cart.id == item.id);
+			$(this).toggleClass("disabled");
+			if(exist){
+				const filterdCarts = carts.filter((cart)=> cart.id != item.id);
+				localStorage.setItem("carts",JSON.stringify(filterdCarts));
+				$("#cart-badge").text(filterdCarts.length);
+				return;
+			}
+			const updatedCarts = [...carts,item];
+			localStorage.setItem("carts",JSON.stringify(updatedCarts));
+			$("#cart-badge").text(updatedCarts.length);
+    	 });
+    	 
 		$(".qty-decrease").click(function(){
 			const itemId = $(this).data("itemid");
 			const qtyElement = $(`div[qty="${itemId}"]`);
@@ -75,20 +90,7 @@
 			qtyElement.text(qty+1);			
 		});
      });
-        // Get the current URL
-        var currentUrl = window.location.pathname;
-
-        // Get all links in the navigation menu
-        var links = document.querySelectorAll('nav ul li a');
-
-        // Iterate over each link
-        links.forEach(function(link) {
-            // Check if the link's href matches the current URL
-            if (link.getAttribute('href') === currentUrl) {
-                // Add the 'active' class to the parent <li> element
-                link.parentElement.classList.add('active');
-            }
-        });         
+           
     </script>        
 </body>
 </html>

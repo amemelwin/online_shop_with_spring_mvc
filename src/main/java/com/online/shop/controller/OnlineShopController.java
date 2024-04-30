@@ -23,12 +23,19 @@ public class OnlineShopController {
 	@GetMapping("/")
 	public String index(Model model) {
 		model.addAttribute("items", onlineShopService.getAllItems());
+		model.addAttribute("currentPage", "index");
 		return "screens/index";
 	}
 	
 	@GetMapping("/items")
 	public void getAllItems() {
 		System.out.println(onlineShopService.getAllItems());
+	}
+	
+	@GetMapping("/carts")
+	public String getCart(Model model) {
+		model.addAttribute("currentPage", "carts");
+		return "screens/carts";
 	}
 
 }

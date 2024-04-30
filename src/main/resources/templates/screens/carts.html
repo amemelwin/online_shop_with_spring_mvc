@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header::title"></head>
+	<body>
+	    <!-- Header fragment -->
+		<header th:replace="~{fragments/header :: header}"></header>
+		<table class="table container" style="margin-top: 100px;">
+			<thead>
+			  <td>Id</td>
+			  <td>Name</td>
+			  <td>Price</td>
+			  <td>Qty</td>
+			  <td>Total</td>
+			</thead>
+			<tbody id="tbody">
+			</tbody>
+		  </table>
+		<script>
+		 $(document).ready(function(){
+			var carts = JSON.parse(localStorage.getItem("carts") || "[]");
+			const renderTable = (()=>{
+				let str = "";
+				carts.map((cart)=>{
+					const totalPrice = cart.price * cart.qty; 
+					str += `
+					<tr class="">
+					<td>${cart.id}</td>
+					<td>${cart.name}</td>
+					<td>${cart.price}</td>
+					<td>
+					    <span data-id="${cart.id}" action="decrease" >-</span> 
+					    <span qty="${cart.id}">${cart.qty}</span>
+					    <span data-id="${cart.id}" action="increase">+</span>
+					</td>
+					<td class="total-price">${totalPrice}</td>				
+					
+				</tr>
+					`
+				});
+				$("#tbody").html(str);
+			});
+			renderTable();
+			 $("#cart-badge").text(carts.length);
+			 $("span[action='decrease']").click(function(){
+			 	const id = $(this).data("id");
+			 	const qtyEle = $(`span[qty=${id}]`);
+			 	let qty = parseInt( qtyEle.text());			 	
+			 	if(qty>1){	
+					qty = qty-1;		 		
+			 		qtyEle.text(qty);
+			 		carts = carts.map((cart)=>{
+			 			if(cart.id == id){
+			 				cart.qty = qty;
+			 			}
+			 			return cart;						
+			 		});
+			 		localStorage.setItem("carts",JSON.stringify(carts));
+					// const cart = carts.find(cart => cart.id == id); // Find cart by id
+					// const totalPrice = cart.price * currentQty; // Calculate total price
+					// console.log("currentQty"+currentQty+ "totalPrice"+totalPrice);
+					// $(`.total-price`).text(totalPrice);
+				}	
+						 	
+			 });
+			 
+			 $("span[action='increase']").click(function(){
+				 const id = $(this).data("id");
+				 const qtyEle = $(`span[qty=${id}]`);
+				 const qty = qtyEle.text();
+				 const currentQty = parseInt(qty);			 	
+				 qtyEle.text(currentQty+1);
+				 carts = carts.map((cart)=>{
+			 			if(cart.id == id){
+			 				cart.qty = currentQty +1;
+			 			}
+			 			return cart;
+			 		});
+			 		localStorage.setItem("carts",JSON.stringify(carts));
+			 });
+		 });
+		</script>
+	</body>	
+</html>
