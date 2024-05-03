@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.online.shop.repository.OrderRepository">
+    
+      <insert id="insertOrderDetails">
+        <foreach collection="list" item="orderDetail" separator=";">
+            INSERT INTO order_details (quantity, order_id, item_id, created_at, updated_at)
+            VALUES (#{orderDetail.quantity}, 1, #{orderDetail.itemId}, NOW(), NOW())
+        </foreach>
+    </insert>
+
+</mapper>
